@@ -1,0 +1,32 @@
+{
+  "name": "student-api",
+  "version": "1.0.0",
+  "description": "Lab 3 - RESTful Web Services API using Express.js (Controller-Service-Repository Architecture)",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "keywords": [
+    "express",
+    "rest",
+    "api",
+    "swagger",
+    "crud",
+    "lab3"
+  ],
+  "author": "SOA Laboratory Student",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^4.19.2",
+    "mongoose": "^9.9.3",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0",
+    "supertest": "^7.2.2"
+  }
+}

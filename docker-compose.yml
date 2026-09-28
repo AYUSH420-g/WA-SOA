@@ -1,0 +1,99 @@
+# =======================================================
+# Compose Configuration - Lab 7 API Gateway & Microservices
+# Architecture: Single Entry API Gateway with Config-based Service Discovery
+# Internal Services: User, Product, Order Services (Docker Network Only)
+# Only Port 8080 (API Gateway) is published to the Host
+# =======================================================
+
+services:
+  # -----------------------------------------------------
+  # 1. API Gateway Service (Public Ingress / Single Entry Point)
+  # -----------------------------------------------------
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080" # ONLY the gateway is exposed externally to host/clients
+    environment:
+      PORT: 8080
+      # Configuration-Based Service Discovery
+      USER_SERVICE_URL: http://user-service:3001
+      PRODUCT_SERVICE_URL: http://product-service:3002
+      ORDER_SERVICE_URL: http://order-service:3003
+    depends_on:
+      - user-service
+      - product-service
+      - order-service
+    networks:
+      - campus-network
+    restart: unless-stopped
+
+  # -----------------------------------------------------
+  # 2. User Service (Internal Only - No Host Ports Exposed)
+  # -----------------------------------------------------
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    expose:
+      - "3001" # Internal to campus-network only
+    environment:
+      USER_SERVICE_PORT: 3001
+      MONGODB_URI: ${MONGODB_URI:-}
+    volumes:
+      - user-data:/app/data
+    networks:
+      - campus-network
+    restart: unless-stopped
+
+  # -----------------------------------------------------
+  # 3. Product Service (Internal Only - No Host Ports Exposed)
+  # -----------------------------------------------------
+  product-service:
+    build: ./product-service
+    container_name: product-service
+    expose:
+      - "3002" # Internal to campus-network only
+    environment:
+      PRODUCT_SERVICE_PORT: 3002
+      MONGODB_URI: ${MONGODB_URI:-}
+    volumes:
+      - product-data:/app/data
+    networks:
+      - campus-network
+    restart: unless-stopped
+
+  # -----------------------------------------------------
+  # 4. Order Service (Internal Only - No Host Ports Exposed)
+  # -----------------------------------------------------
+  order-service:
+    build: ./order-service
+    container_name: order-service
+    expose:
+      - "3003" # Internal to campus-network only
+    environment:
+      ORDER_SERVICE_PORT: 3003
+      USER_SERVICE_URL: http://user-service:3001
+      PRODUCT_SERVICE_URL: http://product-service:3002
+      REQUEST_TIMEOUT_MS: 3000
+      MONGODB_URI: ${MONGODB_URI:-}
+    depends_on:
+      - user-service
+      - product-service
+    volumes:
+      - order-data:/app/data
+    networks:
+      - campus-network
+    restart: unless-stopped
+
+volumes:
+  user-data:
+    name: user-data
+  product-data:
+    name: product-data
+  order-data:
+    name: order-data
+
+networks:
+  campus-network:
+    name: campus-network
+    driver: bridge

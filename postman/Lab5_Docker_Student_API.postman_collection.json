@@ -1,0 +1,113 @@
+{
+  "info": {
+    "_postman_id": "b73e6592-1234-4567-89ab-lab5studentapi",
+    "name": "Lab 5 - Dockerized Student REST API",
+    "description": "Postman Collection for verifying the Dockerized Student REST API and MongoDB containerized environment (Lab 5).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. GET All Students (Containerized)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/students",
+          "host": ["{{baseUrl}}"],
+          "path": ["students"]
+        },
+        "description": "Retrieves all student records from the containerized Student REST API."
+      }
+    },
+    {
+      "name": "2. GET Student by ID (Containerized)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/students/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["students", "1"]
+        },
+        "description": "Retrieves a single student by ID from the Dockerized API."
+      }
+    },
+    {
+      "name": "3. POST Create New Student (Containerized)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Neha Gupta\",\n  \"email\": \"neha.gupta@campus.edu\",\n  \"course\": \"Cloud & Microservices\",\n  \"semester\": 6\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/students",
+          "host": ["{{baseUrl}}"],
+          "path": ["students"]
+        },
+        "description": "Creates a new student record persisted to the containerized MongoDB volume."
+      }
+    },
+    {
+      "name": "4. PUT Update Student (Containerized)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Neha Gupta Updated\",\n  \"email\": \"neha.gupta@campus.edu\",\n  \"course\": \"Distributed Systems & SOA\",\n  \"semester\": 6\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/students/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["students", "1"]
+        },
+        "description": "Updates an existing student record."
+      }
+    },
+    {
+      "name": "5. DELETE Student (Containerized)",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/students/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["students", "1"]
+        },
+        "description": "Deletes a student record."
+      }
+    },
+    {
+      "name": "6. GET API Docs / Swagger (Containerized)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api-docs",
+          "host": ["{{baseUrl}}"],
+          "path": ["api-docs"]
+        },
+        "description": "Verifies interactive Swagger UI documentation from the Docker container."
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ]
+}

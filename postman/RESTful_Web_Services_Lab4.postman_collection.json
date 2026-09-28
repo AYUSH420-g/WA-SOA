@@ -1,0 +1,410 @@
+{
+  "info": {
+    "_postman_id": "b2c3d4e5-f6a7-8901-bcde-f23456789012",
+    "name": "RESTful Web Services – Lab 4 (MongoDB Atlas)",
+    "description": "Postman Collection for Lab 4: Student REST API backed by MongoDB Atlas and consumed by React Web Client and Android Kotlin Client. Includes full CRUD, negative validation/404 tests, unique constraint verification, and persistence-after-restart proof.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "studentId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Positive Tests (CRUD against MongoDB)",
+      "item": [
+        {
+          "name": "1. GET All Students",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response returns student array\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.be.an(\"array\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/students",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "students"
+              ]
+            },
+            "description": "Retrieves the full list of enrolled student documents from MongoDB Atlas."
+          }
+        },
+        {
+          "name": "2. POST Create Student (Captures MongoDB ID)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201 Created\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.id) {",
+                  "    pm.collectionVariables.set(\"studentId\", jsonData.data.id);",
+                  "    console.log(\"Saved studentId to collection variables:\", jsonData.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Kabir Mehta\",\n  \"email\": \"kabir.mehta@university.edu\",\n  \"course\": \"Data Science\",\n  \"semester\": 3\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/students",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "students"
+              ]
+            },
+            "description": "Inserts a new student document into MongoDB Atlas. Automatically stores assigned ObjectId in {{studentId}} variable."
+          }
+        },
+        {
+          "name": "3. GET Student by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.expect(jsonData.data.name).to.eql(\"Kabir Mehta\");"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/students/{{studentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "students",
+                "{{studentId}}"
+              ]
+            },
+            "description": "Retrieves a single student document from MongoDB Atlas using the dynamic {{studentId}}."
+          }
+        },
+        {
+          "name": "4. PUT Update Student",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.expect(jsonData.data.course).to.eql(\"Machine Learning & AI\");"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Kabir Mehta\",\n  \"email\": \"kabir.mehta@university.edu\",\n  \"course\": \"Machine Learning & AI\",\n  \"semester\": 4\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/students/{{studentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "students",
+                "{{studentId}}"
+              ]
+            },
+            "description": "Updates the student document in MongoDB Atlas using findByIdAndUpdate."
+          }
+        },
+        {
+          "name": "5. DELETE Student",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/students/{{studentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "students",
+                "{{studentId}}"
+              ]
+            },
+            "description": "Deletes the student document from MongoDB Atlas."
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Negative Tests (Service Contract & Constraints)",
+      "item": [
+        {
+          "name": "1. GET Non-Existent Student (404 Not Found)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404 Not Found\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.expect(jsonData.message).to.include(\"not found\");"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/students/999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "students",
+                "999"
+              ]
+            },
+            "description": "Tests GET /students/999 as defined in Section 8 & 9. Service contract specifies 404 Not Found with Student not found message."
+          }
+        },
+        {
+          "name": "2. POST Invalid Payload (400 Bad Request)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 Bad Request\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.expect(jsonData.details).to.be.an(\"array\");"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"\",\n  \"email\": \"not-a-valid-email\",\n  \"course\": \"\",\n  \"semester\": -1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/students",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "students"
+              ]
+            },
+            "description": "Tests POST /students with invalid fields. Returns 400 Bad Request with validation details array."
+          }
+        },
+        {
+          "name": "3. POST Duplicate Email (400 Bad Request - Unique Constraint)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 Bad Request\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.expect(jsonData.message).to.include(\"already exists\");"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Duplicate User\",\n  \"email\": \"99ayushsoni@gmail.com\",\n  \"course\": \"Computer Science\",\n  \"semester\": 2\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/students",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "students"
+              ]
+            },
+            "description": "Tests database constraint: uniqueness of email address. Returns 400 Bad Request due to MongoDB unique index error."
+          }
+        },
+        {
+          "name": "4. DELETE Non-Existent Student (404 Not Found)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404 Not Found\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/students/999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "students",
+                "999"
+              ]
+            },
+            "description": "Attempts to delete non-existent ID 999. Returns 404 Not Found."
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Proof of Persistence Across Restart",
+      "item": [
+        {
+          "name": "1. POST Create Persistent Record",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Persistence Proof Student\",\n  \"email\": \"persistence.proof@mongodb.atlas\",\n  \"course\": \"Distributed Cloud Systems\",\n  \"semester\": 4\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/students",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "students"
+              ]
+            },
+            "description": "Step 1 of Proof of Persistence: Insert this record, then stop your Node.js Express server (Ctrl+C), restart it (npm run dev), and execute Step 2."
+          }
+        },
+        {
+          "name": "2. GET All Students (Verify Record Survived Restart)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/students",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "students"
+              ]
+            },
+            "description": "Step 2 of Proof of Persistence: After server restart, verify that Persistence Proof Student is still present in the returned list."
+          }
+        }
+      ]
+    }
+  ]
+}

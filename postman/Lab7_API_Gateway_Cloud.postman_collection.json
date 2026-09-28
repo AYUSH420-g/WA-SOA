@@ -1,0 +1,345 @@
+{
+	"info": {
+		"_postman_id": "lab7-api-gateway-collection-2026",
+		"name": "Lab 7: API Gateway, Service Discovery & Cloud Deployment",
+		"description": "Comprehensive Postman test collection for Web Services & SOA Lab 7: API Gateway routing, /health checks, configuration-based service discovery, centralized 502/503 error handling, and cloud deployment verification.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "publicGatewayUrl",
+			"value": "https://campusconnect-api-gateway.onrender.com",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "1. Gateway Health Check",
+			"item": [
+				{
+					"name": "GET /health - Verify Gateway Status & Registry",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/health",
+							"host": ["{{baseUrl}}"],
+							"path": ["health"]
+						},
+						"description": "Checks the API Gateway's own health status, uptime, and active service discovery routing table."
+					}
+				}
+			]
+		},
+		{
+			"name": "2. User Service via Gateway",
+			"item": [
+				{
+					"name": "GET /users - Retrieve All Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": ["{{baseUrl}}"],
+							"path": ["users"]
+						},
+						"description": "API Gateway reverse-proxies to User Service (http://user-service:3001/users)."
+					}
+				},
+				{
+					"name": "GET /users/101 - Retrieve User By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/101",
+							"host": ["{{baseUrl}}"],
+							"path": ["users", "101"]
+						},
+						"description": "API Gateway proxies parameterized request to User Service."
+					}
+				},
+				{
+					"name": "POST /users - Create New User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"David Clark\",\n  \"email\": \"david.clark@campus.edu\",\n  \"role\": \"researcher\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": ["{{baseUrl}}"],
+							"path": ["users"]
+						},
+						"description": "API Gateway forwards JSON payload to User Service."
+					}
+				},
+				{
+					"name": "PUT /users/101 - Update User",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Alice S. Smith\",\n  \"role\": \"senior_student\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/101",
+							"host": ["{{baseUrl}}"],
+							"path": ["users", "101"]
+						}
+					}
+				},
+				{
+					"name": "DELETE /users/103 - Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/103",
+							"host": ["{{baseUrl}}"],
+							"path": ["users", "103"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "3. Product Service via Gateway",
+			"item": [
+				{
+					"name": "GET /products - Retrieve All Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products",
+							"host": ["{{baseUrl}}"],
+							"path": ["products"]
+						},
+						"description": "API Gateway reverse-proxies to Product Service (http://product-service:3002/products)."
+					}
+				},
+				{
+					"name": "GET /products/501 - Retrieve Product By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products/501",
+							"host": ["{{baseUrl}}"],
+							"path": ["products", "501"]
+						}
+					}
+				},
+				{
+					"name": "POST /products - Create New Product",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Mechanical Keyboard\",\n  \"price\": 75,\n  \"category\": \"Electronics\",\n  \"stock\": 25\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products",
+							"host": ["{{baseUrl}}"],
+							"path": ["products"]
+						}
+					}
+				},
+				{
+					"name": "PUT /products/501 - Update Product Stock",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"stock\": 20,\n  \"price\": 1150\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products/501",
+							"host": ["{{baseUrl}}"],
+							"path": ["products", "501"]
+						}
+					}
+				},
+				{
+					"name": "DELETE /products/502 - Delete Product",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products/502",
+							"host": ["{{baseUrl}}"],
+							"path": ["products", "502"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "4. Order Service via Gateway",
+			"item": [
+				{
+					"name": "POST /orders - Create Valid Order (Chained Inter-Service Call)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": 101,\n  \"productId\": 501,\n  \"quantity\": 2\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/orders",
+							"host": ["{{baseUrl}}"],
+							"path": ["orders"]
+						},
+						"description": "API Gateway proxies to Order Service, which internally queries User and Product microservices."
+					}
+				},
+				{
+					"name": "GET /orders - Retrieve All Orders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/orders",
+							"host": ["{{baseUrl}}"],
+							"path": ["orders"]
+						}
+					}
+				},
+				{
+					"name": "GET /orders/1001 - Retrieve Order by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/orders/1001",
+							"host": ["{{baseUrl}}"],
+							"path": ["orders", "1001"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "5. Error Handling & Resilience (502/503)",
+			"item": [
+				{
+					"name": "GET /products - Downstream Service Unreachable Test",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products",
+							"host": ["{{baseUrl}}"],
+							"path": ["products"]
+						},
+						"description": "Verifies that when a target backend microservice is stopped or unreachable, the gateway responds with HTTP 503 Service Unavailable and a clear JSON error payload without crashing."
+					}
+				},
+				{
+					"name": "GET /unknown - Unmatched Route 404",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/non-existent-route",
+							"host": ["{{baseUrl}}"],
+							"path": ["non-existent-route"]
+						},
+						"description": "Tests gateway fallback handler for unregistered paths."
+					}
+				}
+			]
+		},
+		{
+			"name": "6. Cloud Deployment Verification",
+			"item": [
+				{
+					"name": "Cloud GET /health - Public Gateway Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{publicGatewayUrl}}/health",
+							"host": ["{{publicGatewayUrl}}"],
+							"path": ["health"]
+						},
+						"description": "Tests public gateway live endpoint in cloud environment."
+					}
+				},
+				{
+					"name": "Cloud GET /users - Public Gateway to User Service",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{publicGatewayUrl}}/users",
+							"host": ["{{publicGatewayUrl}}"],
+							"path": ["users"]
+						},
+						"description": "Verifies full cloud chain: Public Gateway -> Cloud User Service -> Data."
+					}
+				},
+				{
+					"name": "Cloud POST /orders - Cloud Microservice Orchestration",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": 101,\n  \"productId\": 501,\n  \"quantity\": 1\n}"
+						},
+						"url": {
+							"raw": "{{publicGatewayUrl}}/orders",
+							"host": ["{{publicGatewayUrl}}"],
+							"path": ["orders"]
+						},
+						"description": "Full-stack cloud test through public API Gateway."
+					}
+				}
+			]
+		}
+	]
+}

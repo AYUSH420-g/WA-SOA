@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+.gradle/
+.idea/
+
+# Environment configurations (Keep examples only)
+.env
+.env.local
+.env.*.local
+*.env
+!.env.example
+!student-client/.env.example
+
+# Android local properties and build output
+local.properties
+student-android/local.properties
+student-android/**/build/
+student-android/.gradle/
+
+# Build & bundle artifacts
+dist/
+build/
+target/
+
+# OS specific files
+.DS_Store
+Thumbs.db

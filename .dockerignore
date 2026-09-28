@@ -1,0 +1,24 @@
+# Node.js dependencies and logs
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Git & System files
+.git
+.gitignore
+.DS_Store
+
+# Environment files with sensitive credentials
+.env
+.env.local
+
+# Non-backend directories (Clients and artifacts)
+student-client
+student-android
+springboot-student-api
+screenshots
+postman
+
+# Documentation and markdown files
+*.md

@@ -1,0 +1,39 @@
+# =======================================================
+# Compose Configuration - Lab 5 Multi-Container Student App
+# Orchestrates Student REST API and MongoDB Database Services
+# =======================================================
+
+services:
+  api:
+    build: .
+    container_name: student-api
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      MONGO_URI: mongodb://mongodb:27017/campusconnect
+    depends_on:
+      - mongodb
+    networks:
+      - student-network
+    restart: unless-stopped
+
+  mongodb:
+    image: mongo:7.0
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - student-mongo-data:/data/db
+    networks:
+      - student-network
+    restart: unless-stopped
+
+volumes:
+  student-mongo-data:
+    name: student-mongo-data
+
+networks:
+  student-network:
+    name: student-network
+    driver: bridge

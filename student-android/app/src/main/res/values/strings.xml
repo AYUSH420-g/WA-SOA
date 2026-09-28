@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Student Manager</string>
+    <string name="title_students">Enrolled Students</string>
+    <string name="add_student">Add Student</string>
+    <string name="title_add_student">Add New Student</string>
+    <string name="label_name">Full Name</string>
+    <string name="label_email">Email Address</string>
+    <string name="label_course">Course Name</string>
+    <string name="label_semester">Semester Number</string>
+    <string name="btn_submit">Submit Student</string>
+    <string name="msg_loading">Loading students from API...</string>
+    <string name="msg_empty">No student records found.</string>
+    <string name="action_search">Lookup by ID</string>
+    <string name="search_dialog_title">Find Student by ID</string>
+    <string name="search_dialog_hint">Enter ID (e.g. 999 or ObjectId)</string>
+    <string name="btn_search">Search</string>
+    <string name="btn_cancel">Cancel</string>
+</resources>

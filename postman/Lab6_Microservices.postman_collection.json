@@ -1,0 +1,262 @@
+{
+  "info": {
+    "_postman_id": "lab6-microservices-campusconnect-coll",
+    "name": "Microservices – Lab 6",
+    "description": "Postman Collection for verifying Dockerized Microservices: User Service (:3001), Product Service (:3002), and Order Service (:3003) with Inter-Service Communication and Error Handling (Lab 6).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. User Service Direct Endpoints",
+      "item": [
+        {
+          "name": "GET All Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{userServiceUrl}}/users",
+              "host": ["{{userServiceUrl}}"],
+              "path": ["users"]
+            },
+            "description": "Retrieves all users from User Service (:3001)."
+          }
+        },
+        {
+          "name": "GET User by ID (Valid)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{userServiceUrl}}/users/101",
+              "host": ["{{userServiceUrl}}"],
+              "path": ["users", "101"]
+            },
+            "description": "Retrieves user 101 (Alice Smith) from User Service."
+          }
+        },
+        {
+          "name": "POST Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"David Lee\",\n  \"email\": \"david@campus.edu\",\n  \"role\": \"student\"\n}"
+            },
+            "url": {
+              "raw": "{{userServiceUrl}}/users",
+              "host": ["{{userServiceUrl}}"],
+              "path": ["users"]
+            },
+            "description": "Creates a new user record in User Service."
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Product Service Direct Endpoints",
+      "item": [
+        {
+          "name": "GET All Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{productServiceUrl}}/products",
+              "host": ["{{productServiceUrl}}"],
+              "path": ["products"]
+            },
+            "description": "Retrieves all products from Product Service (:3002)."
+          }
+        },
+        {
+          "name": "GET Product by ID (Valid)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{productServiceUrl}}/products/501",
+              "host": ["{{productServiceUrl}}"],
+              "path": ["products", "501"]
+            },
+            "description": "Retrieves product 501 (Laptop Pro) from Product Service."
+          }
+        },
+        {
+          "name": "POST Create Product",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Mechanical Keyboard\",\n  \"price\": 75,\n  \"category\": \"Accessories\",\n  \"stock\": 25\n}"
+            },
+            "url": {
+              "raw": "{{productServiceUrl}}/products",
+              "host": ["{{productServiceUrl}}"],
+              "path": ["products"]
+            },
+            "description": "Creates a new product record in Product Service."
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Order Service Direct Endpoints",
+      "item": [
+        {
+          "name": "GET All Orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{orderServiceUrl}}/orders",
+              "host": ["{{orderServiceUrl}}"],
+              "path": ["orders"]
+            },
+            "description": "Retrieves all orders from Order Service (:3003)."
+          }
+        },
+        {
+          "name": "GET Order by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{orderServiceUrl}}/orders/1001",
+              "host": ["{{orderServiceUrl}}"],
+              "path": ["orders", "1001"]
+            },
+            "description": "Retrieves order 1001 by ID."
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Inter-Service Communication (Order -> User & Product)",
+      "item": [
+        {
+          "name": "POST Create Order (Valid 201 - Inter-Service Call)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 101,\n  \"productId\": 501,\n  \"quantity\": 2\n}"
+            },
+            "url": {
+              "raw": "{{orderServiceUrl}}/orders",
+              "host": ["{{orderServiceUrl}}"],
+              "path": ["orders"]
+            },
+            "description": "Calls Order Service, which communicates over Docker network campus-network to User Service (:3001) and Product Service (:3002) to validate data and build order."
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Error Handling Tests (404 & 503)",
+      "item": [
+        {
+          "name": "POST Order with Invalid User ID (Expected 404)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 9999,\n  \"productId\": 501,\n  \"quantity\": 1\n}"
+            },
+            "url": {
+              "raw": "{{orderServiceUrl}}/orders",
+              "host": ["{{orderServiceUrl}}"],
+              "path": ["orders"]
+            },
+            "description": "Validates that non-existent user returns 404 User Not Found."
+          }
+        },
+        {
+          "name": "POST Order with Invalid Product ID (Expected 404)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 101,\n  \"productId\": 9999,\n  \"quantity\": 1\n}"
+            },
+            "url": {
+              "raw": "{{orderServiceUrl}}/orders",
+              "host": ["{{orderServiceUrl}}"],
+              "path": ["orders"]
+            },
+            "description": "Validates that non-existent product returns 404 Product Not Found."
+          }
+        },
+        {
+          "name": "POST Order when Dependency Stopped (Expected 503)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 101,\n  \"productId\": 501,\n  \"quantity\": 1\n}"
+            },
+            "url": {
+              "raw": "{{orderServiceUrl}}/orders",
+              "host": ["{{orderServiceUrl}}"],
+              "path": ["orders"]
+            },
+            "description": "Executed after stopping user-service container. Verifies controlled 503 Service Unavailable response."
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "userServiceUrl",
+      "value": "http://localhost:3001",
+      "type": "string"
+    },
+    {
+      "key": "productServiceUrl",
+      "value": "http://localhost:3002",
+      "type": "string"
+    },
+    {
+      "key": "orderServiceUrl",
+      "value": "http://localhost:3003",
+      "type": "string"
+    }
+  ]
+}
